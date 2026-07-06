@@ -25,7 +25,7 @@ const firebaseServerTimestampSchema = z.custom<FirebaseServerTimestamp>(
 
 const timestampWriteSchema = z.union([timestampSchema, firebaseServerTimestampSchema]);
 
-const infractionReasonSchema = z.enum([
+const infractionSeveritySchema = z.enum([
   "minor",
   "medium",
   "major",
@@ -57,13 +57,27 @@ const infractionSchema = z
     guildId: discordIdSchema,
     targetUser: discordUserSnapshotSchema,
     moderator: discordUserSnapshotSchema,
-    reason: infractionReasonSchema,
+    severity: infractionSeveritySchema,
     description: z.string().trim().min(1).max(1000),
     proof: proofItemsSchema,
     createdAt: timestampSchema,
     updatedAt: timestampSchema,
   })
   .strict();
+
+const legacyInfractionSchema = infractionSchema
+  .omit({
+    severity: true,
+  })
+  .extend({
+    reason: infractionSeveritySchema,
+  })
+  .transform(({ reason, ...infraction }) => ({
+    ...infraction,
+    severity: reason,
+  }));
+
+const infractionReadSchema = z.union([infractionSchema, legacyInfractionSchema]);
 
 const infractionInputSchema = infractionSchema
   .omit({
@@ -85,20 +99,20 @@ const infractionWriteSchema = infractionSchema
   })
   .strict();
 
-const infractionListSchema = z.record(z.uuid(), infractionSchema);
+const infractionListSchema = z.record(z.uuid(), infractionReadSchema);
 
 export type Infraction = z.infer<typeof infractionSchema>;
 
 export type InfractionInput = z.input<typeof infractionInputSchema>;
 
-export type InfractionReason = z.infer<typeof infractionReasonSchema>;
+export type InfractionSeverity = z.infer<typeof infractionSeveritySchema>;
 
 export type RemovedInfraction = {
   readonly infractionId: string;
   readonly parsedInfraction: Infraction | null;
 };
 
-export const infractionReasonChoices = [
+export const infractionSeverityChoices = [
   {
     name: "Minor",
     value: "minor",
@@ -113,11 +127,11 @@ export const infractionReasonChoices = [
   },
 ] as const satisfies readonly {
   readonly name: string;
-  readonly value: InfractionReason;
+  readonly value: InfractionSeverity;
 }[];
 
-export const formatInfractionReason = (reason: InfractionReason): string =>
-  infractionReasonChoices.find((choice) => choice.value === reason)?.name ?? reason;
+export const formatInfractionSeverity = (severity: InfractionSeverity): string =>
+  infractionSeverityChoices.find((choice) => choice.value === severity)?.name ?? severity;
 
 export const createInfraction = async (
   guildId: string,
@@ -142,7 +156,7 @@ export const createInfraction = async (
 
   await setDatabaseValue(path, writeData);
 
-  return parseDatabaseData(infractionSchema, await readDatabaseValue(path), "Saved infraction");
+  return parseDatabaseData(infractionReadSchema, await readDatabaseValue(path), "Saved infraction");
 };
 
 export const listInfractionsForUser = async (
@@ -171,7 +185,7 @@ export const getInfraction = async (
     return null;
   }
 
-  return parseDatabaseData(infractionSchema, value, "Infraction");
+  return parseDatabaseData(infractionReadSchema, value, "Infraction");
 };
 
 export const removeInfraction = async (
@@ -186,7 +200,7 @@ export const removeInfraction = async (
     return null;
   }
 
-  const parsedInfraction = infractionSchema.safeParse(value);
+  const parsedInfraction = infractionReadSchema.safeParse(value);
 
   await removeDatabaseValue(path);
 

@@ -8,7 +8,7 @@ import {
 } from "discord.js";
 
 import {
-  formatInfractionReason,
+  formatInfractionSeverity,
   type Infraction,
 } from "../../../../database/repositories/infraction.repository";
 import { INFRACTIONS_BUTTON_PREFIX } from "./constants";
@@ -42,8 +42,8 @@ export const buildInfractionView = (
         value: `<@${infraction.targetUser.userId}> (${infraction.targetUser.userId})`,
       },
       {
-        name: "Reason",
-        value: formatInfractionReason(infraction.reason),
+        name: "Severity",
+        value: formatInfractionSeverity(infraction.severity),
         inline: true,
       },
       {

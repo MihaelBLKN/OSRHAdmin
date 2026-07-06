@@ -2,10 +2,10 @@ import { SlashCommandBuilder, type Attachment, type User } from "discord.js";
 
 import {
   createInfraction,
-  formatInfractionReason,
-  infractionReasonChoices,
+  formatInfractionSeverity,
+  infractionSeverityChoices,
   type InfractionInput,
-  type InfractionReason,
+  type InfractionSeverity,
 } from "../../../../database/repositories/infraction.repository";
 import { AppError } from "../../../../lib/errors";
 import type { SlashCommand } from "../../../types/command";
@@ -21,10 +21,10 @@ export const infractionCommand: SlashCommand = {
     )
     .addStringOption((option) =>
       option
-        .setName("reason")
-        .setDescription("The infraction reason.")
+        .setName("severity")
+        .setDescription("The infraction severity.")
         .setRequired(true)
-        .addChoices(...infractionReasonChoices),
+        .addChoices(...infractionSeverityChoices),
     )
     .addStringOption((option) =>
       option
@@ -51,7 +51,7 @@ export const infractionCommand: SlashCommand = {
     }
 
     const targetUser = interaction.options.getUser("user", true);
-    const reason = interaction.options.getString("reason", true) as InfractionReason;
+    const severity = interaction.options.getString("severity", true) as InfractionSeverity;
     const description = interaction.options.getString("description", true);
     const proofAttachment = interaction.options.getAttachment("proof");
     const proof = [
@@ -72,14 +72,14 @@ export const infractionCommand: SlashCommand = {
     const infraction = await createInfraction(interaction.guildId, targetUser.id, {
       targetUser: mapUserSnapshot(targetUser),
       moderator: mapUserSnapshot(interaction.user),
-      reason,
+      severity,
       description,
       proof,
     });
 
     await interaction.editReply({
-      content: `Created infraction \`${infraction.infractionId}\` for <@${targetUser.id}>.\nReason: ${formatInfractionReason(
-        infraction.reason,
+      content: `Created infraction \`${infraction.infractionId}\` for <@${targetUser.id}>.\nSeverity: ${formatInfractionSeverity(
+        infraction.severity,
       )}\nProof items: ${String(infraction.proof.length)}`,
     });
   },
