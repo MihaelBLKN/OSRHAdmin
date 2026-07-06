@@ -7,10 +7,12 @@ import { setCommandPermissionCommand } from "./admin/set-command-permission/comm
 import { infractionCommand } from "./moderation/infraction/command";
 import { infractionsCommand } from "./moderation/infractions/command";
 import { removeInfractionCommand } from "./moderation/remove-infraction/command";
+import { linkCommand } from "./utility/link/command";
 import { pingCommand } from "./utility/ping.command";
 
 const commands = [
   pingCommand,
+  linkCommand,
   eventLogCommand,
   setEventsChannelCommand,
   setCommandPermissionCommand,

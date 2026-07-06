@@ -42,4 +42,8 @@ export const dbPaths = {
     `${dbPaths.guildEventLogs(guildId)}/${parseDatabasePathId("eventLogId", eventLogId)}`,
   eventSettings: (guildId: string): string =>
     `eventSettings/${parseDatabasePathId("guildId", guildId)}`,
+  linkedRobloxUser: (discordUserId: string): string =>
+    `linkedRobloxUsers/${parseDatabasePathId("discordUserId", discordUserId)}`,
+  pendingRobloxLink: (discordUserId: string): string =>
+    `pendingRobloxLinks/${parseDatabasePathId("discordUserId", discordUserId)}`,
 } as const;
