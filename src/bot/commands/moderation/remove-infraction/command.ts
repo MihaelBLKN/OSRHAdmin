@@ -1,4 +1,4 @@
-import { MessageFlags, SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 
 import { removeInfraction } from "../../../../database/repositories/infraction.repository";
 import { AppError } from "../../../../lib/errors";
@@ -43,13 +43,12 @@ export const removeInfractionCommand: SlashCommand = {
       });
     }
 
-    await interaction.reply({
+    await interaction.editReply({
       content:
         `Removed infraction \`${removedInfraction.infractionId}\` from <@${targetUser.id}>.` +
         (removedInfraction.parsedInfraction === null
           ? "\nThe stored record did not match the current schema, but it was removed."
           : ""),
-      flags: MessageFlags.Ephemeral,
     });
   },
 };

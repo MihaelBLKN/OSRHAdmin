@@ -22,6 +22,12 @@ export const executeSlashCommand = async (
   }
 
   try {
+    if (command.deferReply !== false) {
+      await interaction.deferReply({
+        flags: MessageFlags.Ephemeral,
+      });
+    }
+
     await assertCommandRolePermission(interaction);
     await command.execute(interaction);
   } catch (error) {
@@ -77,21 +83,30 @@ const replyWithCommandError = async (
   interaction: ChatInputCommandInteraction,
   content: string,
 ): Promise<void> => {
-  if (interaction.deferred) {
-    await interaction.editReply({ content });
-    return;
-  }
+  try {
+    if (interaction.deferred) {
+      await interaction.editReply({ content });
+      return;
+    }
 
-  if (interaction.replied) {
-    await interaction.followUp({
+    if (interaction.replied) {
+      await interaction.followUp({
+        content,
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
+
+    await interaction.reply({
       content,
       flags: MessageFlags.Ephemeral,
     });
-    return;
+  } catch (error) {
+    logger.warn("Failed to send slash command error response.", {
+      commandName: interaction.commandName,
+      guildId: interaction.guildId,
+      userId: interaction.user.id,
+      error: getErrorMessage(error),
+    });
   }
-
-  await interaction.reply({
-    content,
-    flags: MessageFlags.Ephemeral,
-  });
 };

@@ -1,4 +1,4 @@
-import { MessageFlags, SlashCommandBuilder, type Attachment, type User } from "discord.js";
+import { SlashCommandBuilder, type Attachment, type User } from "discord.js";
 
 import {
   createInfraction,
@@ -77,11 +77,10 @@ export const infractionCommand: SlashCommand = {
       proof,
     });
 
-    await interaction.reply({
+    await interaction.editReply({
       content: `Created infraction \`${infraction.infractionId}\` for <@${targetUser.id}>.\nReason: ${formatInfractionReason(
         infraction.reason,
       )}\nProof items: ${String(infraction.proof.length)}`,
-      flags: MessageFlags.Ephemeral,
     });
   },
 };

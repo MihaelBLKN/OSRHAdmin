@@ -1,4 +1,4 @@
-import { ChannelType, MessageFlags, SlashCommandBuilder } from "discord.js";
+import { ChannelType, SlashCommandBuilder } from "discord.js";
 
 import { upsertEventSettings } from "../../../database/repositories/event-settings.repository";
 import { AppError } from "../../../lib/errors";
@@ -28,9 +28,8 @@ export const setEventsChannelCommand: SlashCommand = {
       updatedByUserId: interaction.user.id,
     });
 
-    await interaction.reply({
+    await interaction.editReply({
       content: `Event logs will now be posted in <#${settings.eventsChannelId}>.`,
-      flags: MessageFlags.Ephemeral,
     });
   },
 };

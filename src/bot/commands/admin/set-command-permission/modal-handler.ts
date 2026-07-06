@@ -23,6 +23,10 @@ export const handleCommandPermissionModal = async (
     return false;
   }
 
+  await interaction.deferReply({
+    flags: MessageFlags.Ephemeral,
+  });
+
   try {
     await saveCommandPermissionModal(interaction);
   } catch (error) {
@@ -86,9 +90,8 @@ const saveCommandPermissionModal = async (interaction: ModalSubmitInteraction): 
       ? permission.allowedRoleIds.map((roleId) => `<@&${roleId}>`).join(", ")
       : "No roles. This command is locked until roles are added.";
 
-  await interaction.reply({
+  await interaction.editReply({
     content: `Updated permissions for \`/${permission.commandName}\`.\nAllowed roles: ${roleList}`,
-    flags: MessageFlags.Ephemeral,
   });
 };
 
@@ -130,7 +133,12 @@ const replyWithModalError = async (
   interaction: ModalSubmitInteraction,
   content: string,
 ): Promise<void> => {
-  if (interaction.replied || interaction.deferred) {
+  if (interaction.deferred && !interaction.replied) {
+    await interaction.editReply({ content });
+    return;
+  }
+
+  if (interaction.replied) {
     await interaction.followUp({
       content,
       flags: MessageFlags.Ephemeral,

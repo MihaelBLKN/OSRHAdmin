@@ -6,5 +6,6 @@ import type {
 
 export type SlashCommand = {
   readonly data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
+  readonly deferReply?: boolean;
   readonly execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
 };

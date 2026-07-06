@@ -1,6 +1,5 @@
 import {
   EmbedBuilder,
-  MessageFlags,
   SlashCommandBuilder,
   type Attachment,
   type MessageCreateOptions,
@@ -110,9 +109,8 @@ export const eventLogCommand: SlashCommand = {
       embeds: [buildEventLogEmbed(eventLog)],
     });
 
-    await interaction.reply({
+    await interaction.editReply({
       content: `Logged event \`${eventLog.eventLogId}\` in <#${eventSettings.eventsChannelId}>.`,
-      flags: MessageFlags.Ephemeral,
     });
   },
 };

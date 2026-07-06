@@ -11,6 +11,8 @@ export const handleInfractionsButton = async (interaction: ButtonInteraction): P
     return false;
   }
 
+  await interaction.deferUpdate();
+
   try {
     await updateInfractionPage(interaction);
   } catch (error) {
@@ -21,10 +23,7 @@ export const handleInfractionsButton = async (interaction: ButtonInteraction): P
       error: getErrorMessage(error),
     });
 
-    await interaction.reply({
-      content: toSafeUserMessage(error),
-      flags: MessageFlags.Ephemeral,
-    });
+    await replyWithButtonError(interaction, toSafeUserMessage(error));
   }
 
   return true;
@@ -41,7 +40,7 @@ const updateInfractionPage = async (interaction: ButtonInteraction): Promise<voi
   const infractions = await listInfractionsForUser(interaction.guildId, parsedCustomId.userId);
 
   if (infractions.length === 0) {
-    await interaction.update({
+    await interaction.editReply({
       content: "This user has no infractions in this server.",
       embeds: [],
       components: [],
@@ -49,10 +48,37 @@ const updateInfractionPage = async (interaction: ButtonInteraction): Promise<voi
     return;
   }
 
-  await interaction.update({
+  await interaction.editReply({
     content: "",
     ...buildInfractionView(infractions, parsedCustomId.pageIndex),
   });
+};
+
+const replyWithButtonError = async (
+  interaction: ButtonInteraction,
+  content: string,
+): Promise<void> => {
+  try {
+    if (interaction.deferred || interaction.replied) {
+      await interaction.followUp({
+        content,
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
+
+    await interaction.reply({
+      content,
+      flags: MessageFlags.Ephemeral,
+    });
+  } catch (error) {
+    logger.warn("Failed to send infraction pagination error response.", {
+      customId: interaction.customId,
+      guildId: interaction.guildId,
+      userId: interaction.user.id,
+      error: getErrorMessage(error),
+    });
+  }
 };
 
 const parseInfractionsButtonId = (

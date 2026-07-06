@@ -6,7 +6,6 @@ import {
   TextInputStyle,
 } from "discord.js";
 
-import { getCommandPermission } from "../../../../database/repositories/command-permission.repository";
 import { AppError } from "../../../../lib/errors";
 import type { SlashCommand } from "../../../types/command";
 import {
@@ -28,6 +27,7 @@ export const setCommandPermissionCommand: SlashCommand = {
         .setMinLength(1)
         .setMaxLength(32),
     ),
+  deferReply: false,
   async execute(interaction) {
     if (interaction.user.id !== TEMPORARY_PERMISSION_ADMIN_USER_ID) {
       throw new AppError("DISCORD_ERROR", "You are not allowed to use this command.", {
@@ -53,17 +53,12 @@ export const setCommandPermissionCommand: SlashCommand = {
       );
     }
 
-    const permission = await getCommandPermission(interaction.guildId, commandName);
-    const currentRoleMentions =
-      permission?.allowedRoleIds.map((roleId) => `<@&${roleId}>`).join(" ") ?? "";
-
     const rolesInput = new TextInputBuilder()
       .setCustomId(SET_COMMAND_PERMISSION_ROLES_FIELD_ID)
       .setPlaceholder("@Admin @Moderator or 123456789012345678")
       .setStyle(TextInputStyle.Paragraph)
       .setRequired(false)
-      .setMaxLength(1000)
-      .setValue(currentRoleMentions);
+      .setMaxLength(1000);
     const rolesLabel = new LabelBuilder()
       .setLabel("Allowed role mentions or IDs")
       .setTextInputComponent(rolesInput);

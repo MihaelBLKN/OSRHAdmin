@@ -1,4 +1,4 @@
-import { MessageFlags, SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 
 import { listInfractionsForUser } from "../../../../database/repositories/infraction.repository";
 import { AppError } from "../../../../lib/errors";
@@ -23,16 +23,14 @@ export const infractionsCommand: SlashCommand = {
     const infractions = await listInfractionsForUser(interaction.guildId, targetUser.id);
 
     if (infractions.length === 0) {
-      await interaction.reply({
+      await interaction.editReply({
         content: `<@${targetUser.id}> has no infractions in this server.`,
-        flags: MessageFlags.Ephemeral,
       });
       return;
     }
 
-    await interaction.reply({
+    await interaction.editReply({
       ...buildInfractionView(infractions, 0),
-      flags: MessageFlags.Ephemeral,
     });
   },
 };
