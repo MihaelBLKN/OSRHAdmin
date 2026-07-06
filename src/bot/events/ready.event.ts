@@ -2,7 +2,7 @@ import type { DiscordEvent } from "../types/event";
 import { logger } from "../../lib/logger";
 
 export const readyEvent: DiscordEvent = {
-  name: "ready",
+  name: "clientReady",
   once: true,
   execute(client) {
     logger.info("Discord bot is ready.", {

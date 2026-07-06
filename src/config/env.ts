@@ -12,6 +12,10 @@ const envSchema = z
     LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
     DISCORD_TOKEN: z.string().min(1, "DISCORD_TOKEN is required."),
     DISCORD_CLIENT_ID: z.string().regex(/^\d+$/, "DISCORD_CLIENT_ID must be a Discord snowflake."),
+    DISCORD_GUILD_ID: z.preprocess(
+      emptyStringToUndefined,
+      z.string().regex(/^\d+$/, "DISCORD_GUILD_ID must be a Discord snowflake.").optional(),
+    ),
     FIREBASE_DATABASE_URL: z.url("FIREBASE_DATABASE_URL must be a valid URL."),
     FIREBASE_SERVICE_ACCOUNT_BASE64: optionalString,
     GOOGLE_APPLICATION_CREDENTIALS: optionalString,

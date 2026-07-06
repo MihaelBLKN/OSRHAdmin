@@ -29,4 +29,17 @@ export const dbPaths = {
       "commandName",
       commandName,
     )}`,
+  userInfractions: (guildId: string, userId: string): string =>
+    `infractions/${parseDatabasePathId("guildId", guildId)}/${parseDatabasePathId("userId", userId)}`,
+  infraction: (guildId: string, userId: string, infractionId: string): string =>
+    `${dbPaths.userInfractions(guildId, userId)}/${parseDatabasePathId(
+      "infractionId",
+      infractionId,
+    )}`,
+  guildEventLogs: (guildId: string): string =>
+    `eventLogs/${parseDatabasePathId("guildId", guildId)}`,
+  eventLog: (guildId: string, eventLogId: string): string =>
+    `${dbPaths.guildEventLogs(guildId)}/${parseDatabasePathId("eventLogId", eventLogId)}`,
+  eventSettings: (guildId: string): string =>
+    `eventSettings/${parseDatabasePathId("guildId", guildId)}`,
 } as const;

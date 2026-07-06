@@ -47,6 +47,16 @@ export const updateDatabaseValue = async (
   }
 };
 
+export const removeDatabaseValue = async (path: string): Promise<void> => {
+  try {
+    await realtimeDatabase.ref(path).remove();
+  } catch (error) {
+    throw new AppError("DATABASE_ERROR", `Failed to remove database path "${path}".`, {
+      cause: error,
+    });
+  }
+};
+
 export const runDatabaseTransaction = async <TValue>(
   path: string,
   update: (currentValue: unknown) => TValue,

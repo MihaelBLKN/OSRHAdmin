@@ -1,5 +1,6 @@
 import type { DiscordEvent } from "../types/event";
 import { handleCommandPermissionModal } from "../commands/admin/set-command-permission/modal-handler";
+import { handleInfractionsButton } from "../commands/moderation/infractions/button-handler";
 import { executeSlashCommand } from "../handlers/command-handler";
 
 export const interactionCreateEvent: DiscordEvent = {
@@ -12,6 +13,11 @@ export const interactionCreateEvent: DiscordEvent = {
 
     if (interaction.isModalSubmit()) {
       await handleCommandPermissionModal(interaction);
+      return;
+    }
+
+    if (interaction.isButton()) {
+      await handleInfractionsButton(interaction);
     }
   },
 };
