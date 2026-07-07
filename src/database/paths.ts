@@ -42,6 +42,24 @@ export const dbPaths = {
     `${dbPaths.guildEventLogs(guildId)}/${parseDatabasePathId("eventLogId", eventLogId)}`,
   eventSettings: (guildId: string): string =>
     `eventSettings/${parseDatabasePathId("guildId", guildId)}`,
+  guildPointUsers: (guildId: string): string =>
+    `points/${parseDatabasePathId("guildId", guildId)}/users`,
+  pointUser: (guildId: string, usernameKey: string): string =>
+    `${dbPaths.guildPointUsers(guildId)}/${parseDatabasePathId("usernameKey", usernameKey)}`,
+  guildActivityUsers: (guildId: string): string =>
+    `activity/${parseDatabasePathId("guildId", guildId)}/users`,
+  activityUser: (guildId: string, usernameKey: string): string =>
+    `${dbPaths.guildActivityUsers(guildId)}/${parseDatabasePathId("usernameKey", usernameKey)}`,
+  activeShift: (guildId: string, discordUserId: string): string =>
+    `activeShifts/${parseDatabasePathId("guildId", guildId)}/${parseDatabasePathId(
+      "discordUserId",
+      discordUserId,
+    )}`,
+  guildPointRoles: (guildId: string): string =>
+    `pointRoles/${parseDatabasePathId("guildId", guildId)}`,
+  pointRole: (guildId: string, roleId: string): string =>
+    `${dbPaths.guildPointRoles(guildId)}/${parseDatabasePathId("roleId", roleId)}`,
+  linkedRobloxUsers: (): string => "linkedRobloxUsers",
   linkedRobloxUser: (discordUserId: string): string =>
     `linkedRobloxUsers/${parseDatabasePathId("discordUserId", discordUserId)}`,
   pendingRobloxLink: (discordUserId: string): string =>

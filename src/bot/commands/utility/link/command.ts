@@ -15,6 +15,7 @@ import {
 } from "../../../../database/repositories/linked-roblox-user.repository";
 import { AppError } from "../../../../lib/errors";
 import { findRobloxUserByUsername } from "../../../../roblox/users";
+import { buildSimpleEmbed } from "../../../embeds";
 import type { SlashCommand } from "../../../types/command";
 import { LINK_VERIFY_BUTTON_PREFIX } from "./constants";
 
@@ -52,11 +53,17 @@ export const linkCommand: SlashCommand = {
 
     try {
       await interaction.user.send({
-        content: [
-          `Add this code to your Roblox profile description/About section: \`${pendingLink.verificationCode}\``,
-          `Roblox account: \`${pendingLink.robloxUsername}\` (${pendingLink.robloxId})`,
-          "After saving your Roblox profile, click the button below to verify it.",
-        ].join("\n"),
+        embeds: [
+          buildSimpleEmbed(
+            "Roblox Verification",
+            [
+              `Add this code to your Roblox profile description/About section: \`${pendingLink.verificationCode}\``,
+              `Roblox account: \`${pendingLink.robloxUsername}\` (${pendingLink.robloxId})`,
+              "After saving your Roblox profile, click the button below to verify it.",
+            ].join("\n"),
+            "info",
+          ),
+        ],
         components: [buildVerifyButtonRow(interaction.user.id)],
       });
     } catch (error) {
@@ -71,8 +78,13 @@ export const linkCommand: SlashCommand = {
     }
 
     await interaction.editReply({
-      content:
-        "I sent you a DM with your Roblox verification code and a button to finish linking.",
+      embeds: [
+        buildSimpleEmbed(
+          "Verification Sent",
+          "I sent you a DM with your Roblox verification code and a button to finish linking.",
+          "success",
+        ),
+      ],
     });
   },
 };

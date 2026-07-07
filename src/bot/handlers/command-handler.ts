@@ -2,6 +2,7 @@ import { MessageFlags, type ChatInputCommandInteraction } from "discord.js";
 
 import { commandRegistry } from "../commands";
 import { SET_COMMAND_PERMISSION_COMMAND_NAME } from "../commands/admin/set-command-permission/constants";
+import { buildErrorEmbed } from "../embeds";
 import { getCommandPermission } from "../../database/repositories/command-permission.repository";
 import { AppError, getErrorMessage, toSafeUserMessage } from "../../lib/errors";
 import { logger } from "../../lib/logger";
@@ -85,20 +86,20 @@ const replyWithCommandError = async (
 ): Promise<void> => {
   try {
     if (interaction.deferred) {
-      await interaction.editReply({ content });
+      await interaction.editReply({ embeds: [buildErrorEmbed(content)] });
       return;
     }
 
     if (interaction.replied) {
       await interaction.followUp({
-        content,
+        embeds: [buildErrorEmbed(content)],
         flags: MessageFlags.Ephemeral,
       });
       return;
     }
 
     await interaction.reply({
-      content,
+      embeds: [buildErrorEmbed(content)],
       flags: MessageFlags.Ephemeral,
     });
   } catch (error) {

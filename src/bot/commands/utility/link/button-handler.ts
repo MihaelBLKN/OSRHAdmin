@@ -16,6 +16,7 @@ import {
 import { AppError, getErrorMessage, toSafeUserMessage } from "../../../../lib/errors";
 import { logger } from "../../../../lib/logger";
 import { getRobloxUserProfile } from "../../../../roblox/users";
+import { buildErrorEmbed, buildSimpleEmbed } from "../../../embeds";
 import { LINK_VERIFY_BUTTON_PREFIX } from "./constants";
 
 export const handleLinkVerifyButton = async (
@@ -91,7 +92,13 @@ const verifyRobloxLink = async (interaction: ButtonInteraction): Promise<void> =
   });
 
   await interaction.editReply({
-    content: `Verified and linked your Discord account to Roblox user \`${linkedUser.robloxUsername}\` (${linkedUser.robloxId}).`,
+    embeds: [
+      buildSimpleEmbed(
+        "Roblox Account Linked",
+        `Verified and linked your Discord account to Roblox user \`${linkedUser.robloxUsername}\` (${linkedUser.robloxId}).`,
+        "success",
+      ),
+    ],
     components: [buildVerifiedButtonRow()],
   });
 };
@@ -104,11 +111,11 @@ const replyWithButtonError = async (
     await interaction.followUp(
       interaction.inGuild()
         ? {
-            content,
+            embeds: [buildErrorEmbed(content)],
             flags: MessageFlags.Ephemeral,
           }
         : {
-            content,
+            embeds: [buildErrorEmbed(content)],
           },
     );
   } catch (error) {

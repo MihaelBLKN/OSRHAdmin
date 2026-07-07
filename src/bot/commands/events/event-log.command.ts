@@ -16,6 +16,7 @@ import {
   type EventType,
 } from "../../../database/repositories/event-log.repository";
 import { AppError } from "../../../lib/errors";
+import { buildSimpleEmbed } from "../../embeds";
 import type { SlashCommand } from "../../types/command";
 
 export const eventLogCommand: SlashCommand = {
@@ -110,7 +111,13 @@ export const eventLogCommand: SlashCommand = {
     });
 
     await interaction.editReply({
-      content: `Logged event \`${eventLog.eventLogId}\` in <#${eventSettings.eventsChannelId}>.`,
+      embeds: [
+        buildSimpleEmbed(
+          "Event Logged",
+          `Logged event \`${eventLog.eventLogId}\` in <#${eventSettings.eventsChannelId}>.`,
+          "success",
+        ),
+      ],
     });
   },
 };

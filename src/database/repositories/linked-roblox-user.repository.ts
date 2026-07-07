@@ -110,6 +110,8 @@ const linkedRobloxUserWriteSchema = linkedRobloxUserSchema
   })
   .strict();
 
+const linkedRobloxUsersSchema = z.record(discordIdSchema, linkedRobloxUserSchema);
+
 export type LinkedRobloxUser = z.infer<typeof linkedRobloxUserSchema>;
 
 export type PendingRobloxLink = z.infer<typeof pendingRobloxLinkSchema>;
@@ -178,6 +180,25 @@ export const getLinkedRobloxUser = async (
   }
 
   return parseDatabaseData(linkedRobloxUserSchema, value, "Linked user");
+};
+
+export const findLinkedRobloxUserByRobloxUsername = async (
+  robloxUsername: string,
+): Promise<LinkedRobloxUser | null> => {
+  const normalizedUsername = robloxUsername.trim().toLowerCase();
+  const value = await readDatabaseValue(dbPaths.linkedRobloxUsers());
+
+  if (value === null) {
+    return null;
+  }
+
+  const linkedUsers = parseDatabaseData(linkedRobloxUsersSchema, value, "Linked users");
+
+  return (
+    Object.values(linkedUsers).find(
+      (linkedUser) => linkedUser.robloxUsername.toLowerCase() === normalizedUsername,
+    ) ?? null
+  );
 };
 
 const upsertLinkedRobloxUser = async (

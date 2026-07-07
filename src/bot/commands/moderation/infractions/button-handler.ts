@@ -3,6 +3,7 @@ import { MessageFlags, type ButtonInteraction } from "discord.js";
 import { listInfractionsForUser } from "../../../../database/repositories/infraction.repository";
 import { AppError, getErrorMessage, toSafeUserMessage } from "../../../../lib/errors";
 import { logger } from "../../../../lib/logger";
+import { buildErrorEmbed, buildSimpleEmbed } from "../../../embeds";
 import { INFRACTIONS_BUTTON_PREFIX } from "./constants";
 import { buildInfractionView } from "./view";
 
@@ -41,15 +42,15 @@ const updateInfractionPage = async (interaction: ButtonInteraction): Promise<voi
 
   if (infractions.length === 0) {
     await interaction.editReply({
-      content: "This user has no infractions in this server.",
-      embeds: [],
+      embeds: [
+        buildSimpleEmbed("No Infractions", "This user has no infractions in this server.", "info"),
+      ],
       components: [],
     });
     return;
   }
 
   await interaction.editReply({
-    content: "",
     ...buildInfractionView(infractions, parsedCustomId.pageIndex),
   });
 };
@@ -61,14 +62,14 @@ const replyWithButtonError = async (
   try {
     if (interaction.deferred || interaction.replied) {
       await interaction.followUp({
-        content,
+        embeds: [buildErrorEmbed(content)],
         flags: MessageFlags.Ephemeral,
       });
       return;
     }
 
     await interaction.reply({
-      content,
+      embeds: [buildErrorEmbed(content)],
       flags: MessageFlags.Ephemeral,
     });
   } catch (error) {

@@ -13,6 +13,7 @@ import {
 } from "../../../../database/repositories/command-permission.repository";
 import { AppError, getErrorMessage, toSafeUserMessage } from "../../../../lib/errors";
 import { logger } from "../../../../lib/logger";
+import { buildErrorEmbed, buildSimpleEmbed } from "../../../embeds";
 
 const roleIdPattern = /<@&(?<mentionId>\d+)>|(?<rawId>\b\d{17,20}\b)/g;
 
@@ -91,7 +92,13 @@ const saveCommandPermissionModal = async (interaction: ModalSubmitInteraction): 
       : "No roles. This command is locked until roles are added.";
 
   await interaction.editReply({
-    content: `Updated permissions for \`/${permission.commandName}\`.\nAllowed roles: ${roleList}`,
+    embeds: [
+      buildSimpleEmbed(
+        "Command Permissions Updated",
+        `Updated permissions for \`/${permission.commandName}\`.\nAllowed roles: ${roleList}`,
+        "success",
+      ),
+    ],
   });
 };
 
@@ -134,20 +141,20 @@ const replyWithModalError = async (
   content: string,
 ): Promise<void> => {
   if (interaction.deferred && !interaction.replied) {
-    await interaction.editReply({ content });
+    await interaction.editReply({ embeds: [buildErrorEmbed(content)] });
     return;
   }
 
   if (interaction.replied) {
     await interaction.followUp({
-      content,
+      embeds: [buildErrorEmbed(content)],
       flags: MessageFlags.Ephemeral,
     });
     return;
   }
 
   await interaction.reply({
-    content,
+    embeds: [buildErrorEmbed(content)],
     flags: MessageFlags.Ephemeral,
   });
 };

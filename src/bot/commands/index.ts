@@ -7,6 +7,18 @@ import { setCommandPermissionCommand } from "./admin/set-command-permission/comm
 import { infractionCommand } from "./moderation/infraction/command";
 import { infractionsCommand } from "./moderation/infractions/command";
 import { removeInfractionCommand } from "./moderation/remove-infraction/command";
+import { addPointsCommand } from "./points/add-points.command";
+import { addPointsRoleCommand } from "./points/add-points-role.command";
+import { progressCommand } from "./points/progress.command";
+import { removePointsCommand } from "./points/remove-points.command";
+import { removePointsRoleCommand } from "./points/remove-points-role.command";
+import { resetPointsCommand } from "./points/reset-points.command";
+import { showConfiguredRolesCommand } from "./points/show-configured-roles.command";
+import { updateCommand } from "./points/update.command";
+import { shiftEndCommand } from "./shifts/shiftend.command";
+import { shiftStartCommand } from "./shifts/shiftstart.command";
+import { shiftViewCommand } from "./shifts/shiftview.command";
+import { viewActivityCommand } from "./shifts/viewactivity.command";
 import { linkCommand } from "./utility/link/command";
 import { pingCommand } from "./utility/ping.command";
 
@@ -19,6 +31,18 @@ const commands = [
   infractionCommand,
   infractionsCommand,
   removeInfractionCommand,
+  resetPointsCommand,
+  addPointsCommand,
+  removePointsCommand,
+  addPointsRoleCommand,
+  removePointsRoleCommand,
+  showConfiguredRolesCommand,
+  progressCommand,
+  updateCommand,
+  shiftStartCommand,
+  shiftViewCommand,
+  shiftEndCommand,
+  viewActivityCommand,
 ] satisfies readonly SlashCommand[];
 
 export const commandRegistry = new Collection<string, SlashCommand>(

@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from "discord.js";
 
 import { listInfractionsForUser } from "../../../../database/repositories/infraction.repository";
 import { AppError } from "../../../../lib/errors";
+import { buildSimpleEmbed } from "../../../embeds";
 import type { SlashCommand } from "../../../types/command";
 import { buildInfractionView } from "./view";
 
@@ -24,7 +25,13 @@ export const infractionsCommand: SlashCommand = {
 
     if (infractions.length === 0) {
       await interaction.editReply({
-        content: `<@${targetUser.id}> has no infractions in this server.`,
+        embeds: [
+          buildSimpleEmbed(
+            "No Infractions",
+            `<@${targetUser.id}> has no infractions in this server.`,
+            "info",
+          ),
+        ],
       });
       return;
     }

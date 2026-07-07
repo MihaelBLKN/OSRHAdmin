@@ -8,6 +8,7 @@ import {
   type InfractionSeverity,
 } from "../../../../database/repositories/infraction.repository";
 import { AppError } from "../../../../lib/errors";
+import { buildSimpleEmbed } from "../../../embeds";
 import type { SlashCommand } from "../../../types/command";
 
 const proofLinkPattern = /https?:\/\/[^\s<>()]+/gi;
@@ -78,9 +79,15 @@ export const infractionCommand: SlashCommand = {
     });
 
     await interaction.editReply({
-      content: `Created infraction \`${infraction.infractionId}\` for <@${targetUser.id}>.\nSeverity: ${formatInfractionSeverity(
-        infraction.severity,
-      )}\nProof items: ${String(infraction.proof.length)}`,
+      embeds: [
+        buildSimpleEmbed(
+          "Infraction Created",
+          `Created infraction \`${infraction.infractionId}\` for <@${targetUser.id}>.\nSeverity: ${formatInfractionSeverity(
+            infraction.severity,
+          )}\nProof items: ${String(infraction.proof.length)}`,
+          "success",
+        ),
+      ],
     });
   },
 };

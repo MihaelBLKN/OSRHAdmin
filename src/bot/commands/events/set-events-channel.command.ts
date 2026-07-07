@@ -2,6 +2,7 @@ import { ChannelType, SlashCommandBuilder } from "discord.js";
 
 import { upsertEventSettings } from "../../../database/repositories/event-settings.repository";
 import { AppError } from "../../../lib/errors";
+import { buildSimpleEmbed } from "../../embeds";
 import type { SlashCommand } from "../../types/command";
 
 export const setEventsChannelCommand: SlashCommand = {
@@ -29,7 +30,13 @@ export const setEventsChannelCommand: SlashCommand = {
     });
 
     await interaction.editReply({
-      content: `Event logs will now be posted in <#${settings.eventsChannelId}>.`,
+      embeds: [
+        buildSimpleEmbed(
+          "Events Channel Updated",
+          `Event logs will now be posted in <#${settings.eventsChannelId}>.`,
+          "success",
+        ),
+      ],
     });
   },
 };
